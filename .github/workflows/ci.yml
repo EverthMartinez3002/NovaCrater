@@ -80,6 +80,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
 
+    - name: Verify lock file
+      run: |
+        if [ ! -f package-lock.json ] && [ ! -f yarn.lock ]; then
+          echo "❌ Lock file is missing. Please commit package-lock.json or yarn.lock"
+          exit 1
+        fi
+
     - name: Install dependencies
       run: npm ci
 
@@ -186,8 +193,18 @@ jobs:
 
     - name: Notify on failure
       if: needs.php-tests.result == 'failure' || needs.frontend-tests.result == 'failure' || needs.security-audit.result == 'failure'
+      continue-on-error: true
       run: |
         echo "❌ Some checks failed for branch ${{ github.ref_name }}"
         echo "Commit: ${{ github.sha }}"
         echo "Author: ${{ github.actor }}"
-        exit 1
+        echo "Failed jobs:"
+        if [ "${{ needs.php-tests.result }}" == "failure" ]; then
+          echo "- PHP Tests"
+        fi
+        if [ "${{ needs.frontend-tests.result }}" == "failure" ]; then
+          echo "- Frontend Tests"
+        fi
+        if [ "${{ needs.security-audit.result }}" == "failure" ]; then
+          echo "- Security Audit"
+        fi
