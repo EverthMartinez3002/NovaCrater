@@ -48,34 +48,34 @@ class DemoDataSeeder extends Seeder
     {
         $this->command->info('Cleaning existing demo data...');
         $this->cleanExistingDemoData();
-        
+
         $this->command->info('Creating demo user and company...');
         $this->createUserAndCompany();
-        
+
         $this->command->info('Setting up basic data...');
         $this->setupBasicData();
-        
+
         $this->command->info('Creating customers...');
         $this->createCustomers();
-        
+
         $this->command->info('Creating items and services...');
         $this->createItems();
-        
+
         $this->command->info('Creating invoices with different statuses...');
         $this->createInvoices();
-        
+
         $this->command->info('Creating estimates...');
         $this->createEstimates();
-        
+
         $this->command->info('Creating payments...');
         $this->createPayments();
-        
+
         $this->command->info('Creating expenses...');
         $this->createExpenses();
-        
+
         $this->command->info('Finalizing setup...');
         $this->finalizeSetup();
-        
+
         $this->command->info('Demo data created successfully!');
         $this->printCredentials();
     }
@@ -86,10 +86,10 @@ class DemoDataSeeder extends Seeder
         $demoUser = User::where('email', 'demo@invoiceshelf.com')->first();
         if ($demoUser) {
             $this->command->info('Found existing demo data, cleaning...');
-            
+
             // Get demo company
             $demoCompany = $demoUser->companies()->where('name', 'InvoiceShelf Demo Company')->first();
-            
+
             if ($demoCompany) {
                 // Delete company-related data
                 $demoCompany->invoices()->delete();
@@ -103,11 +103,11 @@ class DemoDataSeeder extends Seeder
                 $demoCompany->taxTypes()->delete();
                 $demoCompany->units()->delete();
                 $demoCompany->expenseCategories()->delete();
-                
+
                 // Delete company
                 $demoCompany->delete();
             }
-            
+
             // Delete demo user
             $demoUser->delete();
         }
@@ -345,14 +345,14 @@ class DemoDataSeeder extends Seeder
             ['status' => 'SENT', 'paid_status' => 'UNPAID', 'days_ago' => 5, 'count' => 3],
             ['status' => 'VIEWED', 'paid_status' => 'UNPAID', 'days_ago' => 10, 'count' => 2],
             ['status' => 'VIEWED', 'paid_status' => 'PARTIALLY_PAID', 'days_ago' => 15, 'count' => 2],
-            
+
             // Completed/paid invoices
             ['status' => 'COMPLETED', 'paid_status' => 'PAID', 'days_ago' => 30, 'count' => 5],
             ['status' => 'COMPLETED', 'paid_status' => 'PAID', 'days_ago' => 60, 'count' => 4],
-            
+
             // Draft invoices
             ['status' => 'DRAFT', 'paid_status' => 'UNPAID', 'days_ago' => 1, 'count' => 2],
-            
+
             // Overdue invoices
             ['status' => 'SENT', 'paid_status' => 'UNPAID', 'days_ago' => 45, 'count' => 3],
         ];
@@ -362,12 +362,12 @@ class DemoDataSeeder extends Seeder
                 $customer = $this->customers->random();
                 $invoiceDate = Carbon::now()->subDays($config['days_ago'] + rand(0, 5));
                 $dueDate = $invoiceDate->copy()->addDays(30);
-                
+
                 $subTotal = rand(1000, 10000);
                 $tax = $subTotal * 0.1; // 10% tax
                 $total = $subTotal + $tax;
-                
-                $dueAmount = $config['paid_status'] === 'PAID' ? 0 : 
+
+                $dueAmount = $config['paid_status'] === 'PAID' ? 0 :
                            ($config['paid_status'] === 'PARTIALLY_PAID' ? $total * 0.5 : $total);
 
                 $invoice = Invoice::factory()->create([
@@ -418,16 +418,16 @@ class DemoDataSeeder extends Seeder
             // Active estimates (for filter demo)
             ['status' => 'SENT', 'days_ago' => 3, 'count' => 3],
             ['status' => 'VIEWED', 'days_ago' => 7, 'count' => 2],
-            
+
             // Accepted estimates
             ['status' => 'ACCEPTED', 'days_ago' => 20, 'count' => 4],
-            
+
             // Rejected estimates
             ['status' => 'REJECTED', 'days_ago' => 25, 'count' => 2],
-            
+
             // Draft estimates
             ['status' => 'DRAFT', 'days_ago' => 1, 'count' => 2],
-            
+
             // Expired estimates
             ['status' => 'EXPIRED', 'days_ago' => 60, 'count' => 2],
         ];
@@ -437,7 +437,7 @@ class DemoDataSeeder extends Seeder
                 $customer = $this->customers->random();
                 $estimateDate = Carbon::now()->subDays($config['days_ago'] + rand(0, 3));
                 $expiryDate = $estimateDate->copy()->addDays(30);
-                
+
                 $subTotal = rand(2000, 15000);
                 $tax = $subTotal * 0.1;
                 $total = $subTotal + $tax;
@@ -489,7 +489,7 @@ class DemoDataSeeder extends Seeder
             ->get();
 
         foreach ($paidInvoices as $invoice) {
-            $paymentAmount = $invoice->paid_status === 'PAID' ? 
+            $paymentAmount = $invoice->paid_status === 'PAID' ?
                 $invoice->total : $invoice->total * 0.5;
 
             Payment::factory()->create([
@@ -500,7 +500,7 @@ class DemoDataSeeder extends Seeder
                 'amount' => $paymentAmount,
                 'base_amount' => $paymentAmount,
                 'payment_date' => Carbon::parse($invoice->invoice_date)->addDays(rand(1, 15)),
-                'notes' => 'Payment for invoice ' . $invoice->invoice_number,
+                'notes' => 'Payment for invoice '.$invoice->invoice_number,
             ]);
         }
 
@@ -533,14 +533,14 @@ class DemoDataSeeder extends Seeder
 
         foreach ($expenseData as $data) {
             $category = $this->expenseCategories->firstWhere('name', $data['category']);
-            
+
             Expense::factory()->create([
                 'company_id' => $this->company->id,
                 'expense_category_id' => $category->id,
                 'amount' => $data['amount'],
                 'base_amount' => $data['amount'],
                 'expense_date' => Carbon::now()->subDays($data['days_ago']),
-                'notes' => 'Business expense for ' . $data['category'],
+                'notes' => 'Business expense for '.$data['category'],
             ]);
         }
     }
@@ -562,11 +562,11 @@ class DemoDataSeeder extends Seeder
         $this->command->line('=================================');
         $this->command->line('Email: demo@invoiceshelf.com');
         $this->command->line('Password: demo123');
-        $this->command->line('Company: ' . $this->company->name);
+        $this->command->line('Company: '.$this->company->name);
         $this->command->line('=================================');
         $this->command->line('');
         $this->command->line('Demo data includes:');
-        $this->command->line('- ' . $this->customers->count() . ' customers (some with portal access)');
+        $this->command->line('- '.$this->customers->count().' customers (some with portal access)');
         $this->command->line('- ~25 invoices with various statuses');
         $this->command->line('- ~15 estimates in different states');
         $this->command->line('- Multiple payments and expenses');
@@ -574,4 +574,4 @@ class DemoDataSeeder extends Seeder
         $this->command->line('');
         $this->command->line('Perfect for demonstrating dashboard filters!');
     }
-} 
+}
