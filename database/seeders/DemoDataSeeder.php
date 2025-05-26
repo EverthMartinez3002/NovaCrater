@@ -28,11 +28,17 @@ use Vinkla\Hashids\Facades\Hashids;
 class DemoDataSeeder extends Seeder
 {
     private $company;
+
     private $user;
+
     private $customers;
+
     private $items;
+
     private $paymentMethods;
+
     private $taxes;
+
     private $expenseCategories;
 
     /**
