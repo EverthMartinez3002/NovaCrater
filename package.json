@@ -5,7 +5,16 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "test": "eslint ./resources/scripts --ext .js"
+    "test": "eslint ./resources/scripts --ext .js",
+    "cypress": "cypress run",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run --reporter cypress-mochawesome-reporter",
+    "test:e2e": "cypress run --headless",
+    "test:e2e:open": "cypress open",
+    "test:performance": "./ejecutar-jmeter.sh",
+    "test:all": "npm run test:e2e && npm run test:performance",
+    "install:testing": "./instalar-herramientas-testing.sh",
+    "verify:testing": "./verificar-instalacion.sh"
   },
   "devDependencies": {
     "@rvxlab/tailwind-plugin-ios-full-height": "^1.1.0",
