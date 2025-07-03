@@ -1,6 +1,6 @@
 <!-- CashFlowPredictiveChart.vue -->
 <template>
-  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8">
+  <div data-cy="predictive-cashflow-chart" class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
@@ -18,7 +18,7 @@
 
     <!-- Chart -->
     <div class="relative h-96">
-      <canvas ref="canvasRef" class="w-full h-full"></canvas>
+      <canvas data-cy="cashflow-chart-canvas" ref="canvasRef" class="w-full h-full"></canvas>
     </div>
     
     <!-- Today Indicator - Outside chart area -->
@@ -29,8 +29,9 @@
     </div>
 
     <!-- Interactive Legend -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div data-cy="cashflow-legend" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
       <button 
+        data-cy="legend-real-income"
         @click="toggleDataset('Real Income')"
         class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
         :class="{ 'opacity-50': hiddenDatasets.includes('Real Income') }"
@@ -39,6 +40,7 @@
         <span class="text-sm text-gray-600 dark:text-gray-400">Real Income</span>
       </button>
       <button 
+        data-cy="legend-projected-income"
         @click="toggleDataset('Projected Income')"
         class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
         :class="{ 'opacity-50': hiddenDatasets.includes('Projected Income') }"
@@ -47,6 +49,7 @@
         <span class="text-sm text-gray-600 dark:text-gray-400">Projected Income</span>
       </button>
       <button 
+        data-cy="legend-expenses"
         @click="toggleDataset('Expenses')"
         class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
         :class="{ 'opacity-50': hiddenDatasets.includes('Expenses') }"
@@ -55,6 +58,7 @@
         <span class="text-sm text-gray-600 dark:text-gray-400">Expenses</span>
       </button>
       <button 
+        data-cy="legend-net-cashflow"
         @click="toggleDataset('Net Cash Flow')"
         class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
         :class="{ 'opacity-50': hiddenDatasets.includes('Net Cash Flow') }"

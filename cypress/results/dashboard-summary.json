@@ -1,0 +1,28 @@
+{
+  "totalTests": 0,
+  "passedTests": 0,
+  "failedTests": 0,
+  "results": {
+    "dashboard-core": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0
+    },
+    "dashboard-table": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0
+    },
+    "dashboard-export": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0
+    },
+    "dashboard-charts": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0
+    }
+  },
+  "duration": 8905
+}

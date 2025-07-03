@@ -64,6 +64,7 @@
     "draft": "Draft",
     "sent": "Sent",
     "all": "All",
+    "not_overdue": "Not Overdue",
     "select_all": "Select All",
     "select_template": "Select Template",
     "choose_file": "Click here to choose a file",

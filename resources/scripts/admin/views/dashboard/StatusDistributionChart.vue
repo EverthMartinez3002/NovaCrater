@@ -1,6 +1,6 @@
 <!-- StatusDistribution.vue -->
 <template>
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 relative h-full flex flex-col">
+  <div data-cy="status-distribution-chart" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 relative h-full flex flex-col">
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -13,7 +13,7 @@
 
     <!-- Chart + Tooltip -->
     <div class="relative flex-1 flex items-center justify-center">
-      <canvas ref="canvasRef" class="w-full h-full"></canvas>
+      <canvas data-cy="status-chart-canvas" ref="canvasRef" class="w-full h-full"></canvas>
 
       <!-- Tooltip -->
       <div
@@ -31,10 +31,11 @@
     </div>
 
     <!-- Legend (clickable) -->
-    <div class="mt-6 flex divide-x divide-gray-200 dark:divide-gray-600">
+    <div data-cy="chart-legend" class="mt-6 flex divide-x divide-gray-200 dark:divide-gray-600">
       <div
         v-for="(status, idx) in statusData"
         :key="status.label"
+        :data-cy="`legend-item-${status.label.toLowerCase()}`"
         @click="toggleSegment(idx)"
         :class="[
           'flex-1 text-center px-4 first:pl-0 last:pr-0 cursor-pointer',
