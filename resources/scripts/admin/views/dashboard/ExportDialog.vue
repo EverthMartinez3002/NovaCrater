@@ -1,11 +1,13 @@
 <template>
   <!-- Dialog Overlay -->
   <div
+    data-cy="export-dialog-overlay"
     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50"
     @click="closeDialog"
   >
     <!-- Dialog Content -->
     <div
+      data-cy="export-dialog"
       class="w-full max-w-4xl max-h-[90vh] overflow-auto bg-white rounded-lg shadow-xl dark:bg-gray-800"
       @click.stop
     >
@@ -13,14 +15,18 @@
       <div class="p-6 border-b border-gray-200 dark:border-gray-700">
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              Export Options
+            <h2 data-cy="export-dialog-title" class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              Export Dashboard
             </h2>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
               Choose one, several, or all sections to export from your dashboard
             </p>
+            <div data-cy="selected-format" class="mt-1 text-sm text-purple-600 dark:text-purple-400 font-medium">
+              Format: {{ format.toUpperCase() }}
+            </div>
           </div>
           <button
+            data-cy="close-dialog"
             @click="$emit('close')"
             class="text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
           >
@@ -46,6 +52,7 @@
         <!-- Dashboard Snapshot Option (only for PDF) - MODERNIZED DESIGN -->
         <div
           v-if="format === 'pdf'"
+          data-cy="snapshot-option"
           @click="toggleSnapshotMode"
           class="group relative cursor-pointer transition-all duration-300 ease-out transform hover:scale-[1.01] hover:shadow-xl"
           :class="[
@@ -283,6 +290,7 @@
 
         <!-- Dashboard Overview Card -->
         <div
+          data-cy="section-dashboard"
           @click="
             !isSnapshotMode
               ? toggleSelection('dashboard')
@@ -339,6 +347,7 @@
 
         <!-- Cash Flow Analysis Card -->
         <div
+          data-cy="section-cashflow"
           @click="
             !isSnapshotMode
               ? toggleSelection('cashflow')
@@ -395,6 +404,7 @@
 
         <!-- Recent Invoices Card -->
         <div
+          data-cy="section-invoices"
           @click="
             !isSnapshotMode
               ? toggleSelection('invoices')
@@ -483,12 +493,14 @@
             selected
           </span>
           <button
+            data-cy="cancel-export"
             @click="$emit('close')"
             class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg transition-colors hover:bg-gray-50 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600"
           >
             Cancel
           </button>
           <button
+            data-cy="confirm-export"
             @click="exportSelected"
             :disabled="!isSnapshotMode && selectedSections.length === 0"
             class="flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-lg"

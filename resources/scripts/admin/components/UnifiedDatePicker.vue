@@ -1,12 +1,14 @@
 <template>
   <div class="relative">
     <BaseDropdown 
+      data-cy="unified-date-picker"
       class="relative date-picker-dropdown"
       width-class="w-72"
       container-class="max-w-[90vw]"
     >
       <template #activator>
         <BaseButton
+          data-cy="date-picker-trigger"
           variant="primary-outline"
           size="sm"
           class="min-w-[140px] max-w-[200px]"
@@ -29,6 +31,7 @@
             Date Range Filter
           </h3>
           <button
+            data-cy="reset-date-filter"
             v-if="dateFilterStore.selectedDateRange !== 'last_30_days'"
             @click="resetToDefault"
             class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -45,6 +48,7 @@
             class="relative"
           >
             <button
+              :data-cy="`date-option-${option.value}`"
               @click="selectDateRange(option.value)"
               :class="[
                 'w-full text-left px-3 py-2 text-sm rounded-md transition-colors duration-200',
@@ -78,6 +82,7 @@
                 Start Date
               </label>
               <input
+                data-cy="custom-start-date"
                 v-model="localStartDate"
                 type="date"
                 class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
@@ -89,6 +94,7 @@
                 End Date
               </label>
               <input
+                data-cy="custom-end-date"
                 v-model="localEndDate"
                 type="date"
                 :min="localStartDate"
@@ -98,7 +104,7 @@
             </div>
             
             <!-- Custom Range Validation -->
-            <div v-if="!dateFilterStore.hasValidCustomRange" class="text-xs text-red-600 dark:text-red-400">
+            <div data-cy="date-validation-error" v-if="!dateFilterStore.hasValidCustomRange" class="text-xs text-red-600 dark:text-red-400">
               Please select a valid date range
             </div>
           </div>
@@ -107,6 +113,7 @@
         <!-- Apply/Cancel Actions for Custom Range -->
         <div v-if="dateFilterStore.isCustomRange" class="flex items-center justify-end space-x-2 pt-3 border-t border-gray-200 dark:border-gray-600">
           <BaseButton
+            data-cy="cancel-custom-range"
             variant="secondary"
             size="xs"
             @click="cancelCustomRange"
@@ -114,6 +121,7 @@
             Cancel
           </BaseButton>
           <BaseButton
+            data-cy="apply-custom-range"
             variant="primary"
             size="xs"
             :disabled="!dateFilterStore.hasValidCustomRange"

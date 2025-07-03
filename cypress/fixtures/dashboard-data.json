@@ -1,0 +1,184 @@
+{
+  "companies": [
+    {
+      "id": 1,
+      "name": "Test Company LLC",
+      "currency": "USD"
+    }
+  ],
+  "customers": [
+    {
+      "id": 1,
+      "name": "Acme Corporation",
+      "contact_name": "John Doe",
+      "email": "john@acme.com",
+      "enable_portal": true
+    },
+    {
+      "id": 2,
+      "name": "Tech Solutions Inc",
+      "contact_name": "Jane Smith", 
+      "email": "jane@techsolutions.com",
+      "enable_portal": true
+    },
+    {
+      "id": 3,
+      "name": "Global Industries",
+      "contact_name": "Bob Wilson",
+      "email": "bob@global.com", 
+      "enable_portal": false
+    },
+    {
+      "id": 4,
+      "name": "Digital Marketing Pro",
+      "contact_name": "Sarah Johnson",
+      "email": "sarah@digitalmarketing.com",
+      "enable_portal": true
+    },
+    {
+      "id": 5,
+      "name": "Consulting Group",
+      "contact_name": "Mike Brown",
+      "email": "mike@consulting.com",
+      "enable_portal": true
+    }
+  ],
+  "invoices": [
+    {
+      "id": 1,
+      "invoice_number": "INV-001",
+      "status": "SENT",
+      "paid_status": "UNPAID",
+      "total": 250000,
+      "due_amount": 250000,
+      "invoice_date": "2024-01-15",
+      "due_date": "2024-02-14",
+      "customer_id": 1,
+      "customer": {
+        "id": 1,
+        "name": "Acme Corporation",
+        "contact_name": "John Doe"
+      }
+    },
+    {
+      "id": 2,
+      "invoice_number": "INV-002", 
+      "status": "PAID",
+      "paid_status": "PAID",
+      "total": 150000,
+      "due_amount": 0,
+      "invoice_date": "2024-01-20",
+      "due_date": "2024-02-19",
+      "customer_id": 2,
+      "customer": {
+        "id": 2,
+        "name": "Tech Solutions Inc",
+        "contact_name": "Jane Smith"
+      }
+    },
+    {
+      "id": 3,
+      "invoice_number": "INV-003",
+      "status": "SENT",
+      "paid_status": "PARTIALLY_PAID", 
+      "total": 300000,
+      "due_amount": 100000,
+      "invoice_date": "2024-01-25",
+      "due_date": "2024-02-24",
+      "customer_id": 3,
+      "customer": {
+        "id": 3,
+        "name": "Global Industries",
+        "contact_name": "Bob Wilson"
+      }
+    },
+    {
+      "id": 4,
+      "invoice_number": "INV-004",
+      "status": "OVERDUE",
+      "paid_status": "UNPAID",
+      "total": 180000,
+      "due_amount": 180000,
+      "invoice_date": "2023-12-01",
+      "due_date": "2023-12-31",
+      "customer_id": 4,
+      "customer": {
+        "id": 4,
+        "name": "Digital Marketing Pro",
+        "contact_name": "Sarah Johnson"
+      }
+    },
+    {
+      "id": 5,
+      "invoice_number": "INV-005",
+      "status": "VIEWED",
+      "paid_status": "UNPAID",
+      "total": 420000,
+      "due_amount": 420000,
+      "invoice_date": "2024-02-01",
+      "due_date": "2024-03-02",
+      "customer_id": 5,
+      "customer": {
+        "id": 5,
+        "name": "Consulting Group",
+        "contact_name": "Mike Brown"
+      }
+    }
+  ],
+  "estimates": [
+    {
+      "id": 1,
+      "estimate_number": "EST-001",
+      "status": "SENT",
+      "total": 200000,
+      "estimate_date": "2024-01-10",
+      "customer_id": 1
+    },
+    {
+      "id": 2,
+      "estimate_number": "EST-002", 
+      "status": "ACCEPTED",
+      "total": 175000,
+      "estimate_date": "2024-01-18",
+      "customer_id": 2
+    },
+    {
+      "id": 3,
+      "estimate_number": "EST-003",
+      "status": "VIEWED",
+      "total": 320000,
+      "estimate_date": "2024-02-05",
+      "customer_id": 4
+    }
+  ],
+  "expectedMetrics": {
+    "totalInvoices": 5,
+    "totalCustomers": 5,
+    "totalEstimates": 3,
+    "totalSales": 1300000,
+    "totalAmountDue": 950000,
+    "statusDistribution": {
+      "paid": 1,
+      "pending": 2,
+      "overdue": 2
+    }
+  },
+  "dateRanges": {
+    "last_7_days": {
+      "start": "2024-02-15",
+      "end": "2024-02-22"
+    },
+    "last_30_days": {
+      "start": "2024-01-23", 
+      "end": "2024-02-22"
+    },
+    "last_90_days": {
+      "start": "2023-11-24",
+      "end": "2024-02-22"
+    },
+    "custom": {
+      "start": "2024-01-01",
+      "end": "2024-01-31"
+    }
+  }
+} 

@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+  <div data-cy="dashboard-table" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
     <!-- Table Header with Title and Actions -->
     <div class="p-6 border-b border-gray-200 dark:border-gray-600">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
         <div class="flex items-center space-x-3">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Invoices</h3>
-          <span v-if="totalCount > 0" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+          <span data-cy="invoice-count" v-if="totalCount > 0" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
             {{ totalCount }} {{ totalCount === 1 ? 'invoice' : 'invoices' }}
           </span>
         </div>
@@ -14,6 +14,7 @@
         <div class="flex flex-wrap items-center gap-3">
           <!-- Filter Toggle -->
           <BaseButton
+            data-cy="filter-toggle"
             v-if="totalCount > 0"
             variant="primary-outline"
             size="sm"
@@ -32,6 +33,7 @@
 
           <!-- Bulk Actions -->
           <BaseDropdown
+            data-cy="bulk-actions"
             v-if="selectedInvoices.length > 0 && userStore.hasAbilities(abilities.DELETE_INVOICE)"
             class="relative"
           >
@@ -54,12 +56,12 @@
     </div>
 
     <!-- Filters Section -->
-    <div v-if="showFilters || hasActiveFilters" class="p-6 border-b border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50">
+    <div data-cy="filters-section" v-if="showFilters || hasActiveFilters" class="p-6 border-b border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50">
       <!-- Filter Chips Row -->
       <div class="flex flex-wrap items-center gap-3 mb-4">
         <!-- Filter Badge with Count -->
         <div class="flex items-center">
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200">
+          <span data-cy="active-filter-count" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200">
             <BaseIcon name="FunnelIcon" class="w-3 h-3 mr-1" />
             Filter {{ activeFilterCount }}
           </span>
@@ -76,12 +78,34 @@
           </span>
         </div>
 
-        <!-- Status Filter Chip -->
+        <!-- Document Status Filter Chip -->
         <div v-if="filters.status" class="flex items-center space-x-1">
           <span class="text-sm text-gray-500 dark:text-gray-400">Status:</span>
           <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
-            {{ getStatusLabel(filters.status) }}
+            {{ getDocumentStatusLabel(filters.status) }}
             <button @click="clearStatusFilter" class="ml-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <BaseIcon name="XMarkIcon" class="w-3 h-3" />
+            </button>
+          </span>
+        </div>
+
+        <!-- Payment Status Filter Chip -->
+        <div v-if="filters.paid_status" class="flex items-center space-x-1">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Payment:</span>
+          <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+            {{ getPaymentStatusLabel(filters.paid_status) }}
+            <button @click="clearPaymentStatusFilter" class="ml-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <BaseIcon name="XMarkIcon" class="w-3 h-3" />
+            </button>
+          </span>
+        </div>
+
+        <!-- Overdue Filter Chip -->
+        <div v-if="filters.overdue" class="flex items-center space-x-1">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Overdue:</span>
+          <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+            {{ getOverdueLabel(filters.overdue) }}
+            <button @click="clearOverdueFilter" class="ml-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
               <BaseIcon name="XMarkIcon" class="w-3 h-3" />
             </button>
           </span>
@@ -104,6 +128,7 @@
             <BaseIcon name="MagnifyingGlassIcon" class="h-4 w-4 text-gray-400" />
           </div>
           <input
+            data-cy="search-input"
             v-model="filters.search"
             type="text"
             placeholder="Search"
@@ -119,7 +144,7 @@
           <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</p>
           <div class="flex flex-wrap gap-2">
             <button
-              v-for="status in statusOptions"
+              v-for="status in documentStatusOptions"
               :key="status.value"
               :class="[
                 'px-3 py-1 text-xs font-medium rounded-full transition-colors duration-200',
@@ -128,6 +153,46 @@
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
               ]"
               @click="toggleStatusFilter(status.value)"
+            >
+              {{ status.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Payment Status Filter Buttons -->
+        <div>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Payment Status</p>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="status in paymentStatusOptions"
+              :key="status.value"
+              :class="[
+                'px-3 py-1 text-xs font-medium rounded-full transition-colors duration-200',
+                filters.paid_status === status.value
+                  ? 'bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              ]"
+              @click="togglePaymentStatusFilter(status.value)"
+            >
+              {{ status.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Overdue Filter Buttons -->
+        <div>
+          <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Overdue</p>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="status in overdueOptions"
+              :key="status.value"
+              :class="[
+                'px-3 py-1 text-xs font-medium rounded-full transition-colors duration-200',
+                filters.overdue === status.value
+                  ? 'bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              ]"
+              @click="toggleOverdueFilter(status.value)"
             >
               {{ status.label }}
             </button>
@@ -168,31 +233,32 @@
 
     <!-- Table -->
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+      <table data-cy="invoices-table" class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
             <!-- Select All Checkbox -->
             <th scope="col" class="px-6 py-3 text-left">
               <BaseCheckbox
+                data-cy="select-all-checkbox"
                 v-model="selectAllField"
                 variant="primary"
                 @change="selectAllInvoices"
               />
             </th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              <div class="flex items-center space-x-1 cursor-pointer" @click="sortBy('invoice_number')">
+              <div data-cy="sort-invoice-number" class="flex items-center space-x-1 cursor-pointer" @click="sortBy('invoice_number')">
                 <span>Number</span>
                 <BaseIcon name="ChevronUpDownIcon" class="w-3 h-3" />
               </div>
             </th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              <div class="flex items-center space-x-1 cursor-pointer" @click="sortBy('status')">
+              <div data-cy="sort-status" class="flex items-center space-x-1 cursor-pointer" @click="sortBy('status')">
                 <span>Status</span>
                 <BaseIcon name="ChevronUpDownIcon" class="w-3 h-3" />
               </div>
             </th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              <div class="flex items-center space-x-1 cursor-pointer" @click="sortBy('invoice_date')">
+              <div data-cy="sort-date" class="flex items-center space-x-1 cursor-pointer" @click="sortBy('invoice_date')">
                 <span>Date</span>
                 <BaseIcon name="ChevronUpDownIcon" class="w-3 h-3" />
               </div>
@@ -201,13 +267,13 @@
               Customer
             </th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              <div class="flex items-center space-x-1 cursor-pointer" @click="sortBy('total')">
+              <div data-cy="sort-total" class="flex items-center space-x-1 cursor-pointer" @click="sortBy('total')">
                 <span>Total</span>
                 <BaseIcon name="ChevronUpDownIcon" class="w-3 h-3" />
               </div>
             </th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              <div class="flex items-center space-x-1 cursor-pointer" @click="sortBy('due_amount')">
+              <div data-cy="sort-amount-due" class="flex items-center space-x-1 cursor-pointer" @click="sortBy('due_amount')">
                 <span>Amount Due</span>
                 <BaseIcon name="ChevronUpDownIcon" class="w-3 h-3" />
               </div>
@@ -217,7 +283,7 @@
             </th>
           </tr>
         </thead>
-        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
+        <tbody data-cy="table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
           <!-- Loading State -->
           <tr v-if="isLoading" v-for="n in 5" :key="n" class="animate-pulse">
             <td class="px-6 py-4 whitespace-nowrap">
@@ -374,7 +440,7 @@
     </div>
 
     <!-- Pagination -->
-    <div v-if="totalCount > pageSize && !isLoading" class="px-6 py-4 border-t border-gray-200 dark:border-gray-600">
+    <div data-cy="pagination" v-if="totalCount > pageSize && !isLoading" class="px-6 py-4 border-t border-gray-200 dark:border-gray-600">
       <div class="flex items-center justify-between">
         <div class="text-sm text-gray-700 dark:text-gray-300">
           Showing {{ ((currentPage - 1) * pageSize) + 1 }} to {{ Math.min(currentPage * pageSize, totalCount) }} of {{ totalCount }} results
@@ -467,22 +533,34 @@ const currentDateRangeLabel = ref('Last 30 days')
 // Filters (removed date filters as they're now controlled by unified filter)
 const filters = reactive({
   customer_id: '',
-  status: '',
+  status: '', // Document status
+  paid_status: '', // Payment status  
+  overdue: '', // Overdue filter
   search: ''
 })
 
-// Status options for filter
-const statusOptions = ref([
+// Document status options for filter
+const documentStatusOptions = ref([
   { label: t('general.all'), value: '' },
   { label: t('general.draft'), value: 'DRAFT' },
   { label: t('general.sent'), value: 'SENT' },
-  { label: t('general.due'), value: 'DUE' },
-  { label: t('invoices.overdue'), value: 'OVERDUE' },
   { label: t('invoices.viewed'), value: 'VIEWED' },
-  { label: t('invoices.completed'), value: 'COMPLETED' },
+  { label: t('invoices.completed'), value: 'COMPLETED' }
+])
+
+// Payment status options for filter
+const paymentStatusOptions = ref([
+  { label: t('general.all'), value: '' },
   { label: t('invoices.unpaid'), value: 'UNPAID' },
-  { label: t('invoices.paid'), value: 'PAID' },
-  { label: t('invoices.partially_paid'), value: 'PARTIALLY_PAID' }
+  { label: t('invoices.partially_paid'), value: 'PARTIALLY_PAID' },
+  { label: t('invoices.paid'), value: 'PAID' }
+])
+
+// Overdue options for filter
+const overdueOptions = ref([
+  { label: t('general.all'), value: '' },
+  { label: t('invoices.overdue'), value: 'true' },
+  { label: t('general.not_overdue'), value: 'false' }
 ])
 
 // Computed
@@ -512,7 +590,7 @@ const visiblePages = computed(() => {
 })
 
 const hasActiveFilters = computed(() => {
-  return filters.customer_id || filters.status || filters.search || 
+  return filters.customer_id || filters.status || filters.paid_status || filters.overdue || filters.search || 
          (currentDateRangeLabel.value !== 'Last 30 days')
 })
 
@@ -520,6 +598,8 @@ const activeFilterCount = computed(() => {
   let count = 0
   if (filters.customer_id) count++
   if (filters.status) count++
+  if (filters.paid_status) count++
+  if (filters.overdue) count++
   if (filters.search) count++
   if (currentDateRangeLabel.value !== 'Last 30 days') count++
   return count
@@ -554,6 +634,8 @@ async function loadInvoices() {
       orderBy: sortOrder.value,
       customer_id: filters.customer_id,
       status: filters.status,
+      paid_status: filters.paid_status,
+      overdue: filters.overdue,
       from_date: currentDateRange.value.start,
       to_date: currentDateRange.value.end,
       search: filters.search
@@ -583,6 +665,8 @@ function toggleFilters() {
 function clearAllFilters() {
   filters.customer_id = ''
   filters.status = ''
+  filters.paid_status = ''
+  filters.overdue = ''
   filters.search = ''
   showFilters.value = false
   // Note: Date filter cannot be cleared from table as it's controlled by global filter
@@ -596,8 +680,24 @@ function clearStatusFilter() {
   filters.status = ''
 }
 
+function clearPaymentStatusFilter() {
+  filters.paid_status = ''
+}
+
+function clearOverdueFilter() {
+  filters.overdue = ''
+}
+
 function toggleStatusFilter(value) {
   filters.status = filters.status === value ? '' : value
+}
+
+function togglePaymentStatusFilter(value) {
+  filters.paid_status = filters.paid_status === value ? '' : value
+}
+
+function toggleOverdueFilter(value) {
+  filters.overdue = filters.overdue === value ? '' : value
 }
 
 function sortBy(field) {
@@ -682,8 +782,18 @@ function formatDate(date) {
   
   return `${day}${suffix} ${month} ${year}`
 }
-function getStatusLabel(value) {
-  const status = statusOptions.value.find(s => s.value === value)
+function getDocumentStatusLabel(value) {
+  const status = documentStatusOptions.value.find(s => s.value === value)
+  return status ? status.label : value
+}
+
+function getPaymentStatusLabel(value) {
+  const status = paymentStatusOptions.value.find(s => s.value === value)
+  return status ? status.label : value
+}
+
+function getOverdueLabel(value) {
+  const status = overdueOptions.value.find(s => s.value === value)
   return status ? status.label : value
 }
 
@@ -710,6 +820,8 @@ function getTableDataForSnapshot() {
     filters: {
       customer_id: filters.customer_id,
       status: filters.status,
+      paid_status: filters.paid_status,
+      overdue: filters.overdue,
       from_date: currentDateRange.value.start,
       to_date: currentDateRange.value.end,
       search: filters.search

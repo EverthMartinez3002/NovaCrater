@@ -1,0 +1,110 @@
+{
+  "pdfExport": {
+    "format": "pdf",
+    "sections": ["dashboard", "invoices"],
+    "expectedFilename": "dashboard-report.pdf",
+    "mimeType": "application/pdf"
+  },
+  "xlsxExport": {
+    "format": "xlsx", 
+    "sections": ["dashboard", "cashflow", "invoices"],
+    "expectedFilename": "dashboard-export.xlsx",
+    "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "expectedSheets": ["Dashboard Overview", "Cash Flow", "Recent Invoices"]
+  },
+  "csvExport": {
+    "format": "csv",
+    "sections": ["invoices"],
+    "expectedFilename": "invoices-export.csv",
+    "mimeType": "text/csv",
+    "expectedHeaders": ["Invoice #", "Status", "Date", "Customer", "Contact", "Total", "Amount Due"]
+  },
+  "snapshotExport": {
+    "selectedSections": ["dashboard", "cashflow", "invoices"],
+    "expectedFilename": "dashboard-snapshot",
+    "mimeType": "application/pdf",
+    "requiredElements": [
+      "chartImages.statusDistribution",
+      "chartImages.outstandingInvoices", 
+      "chartImages.predictiveCashFlow",
+      "tableData.invoices"
+    ]
+  },
+  "testScenarios": {
+    "fullExport": {
+      "pdf": {
+        "sections": ["dashboard", "cashflow", "invoices"],
+        "filters": {
+          "date_range": "last_30_days"
+        }
+      },
+      "xlsx": {
+        "sections": ["dashboard", "cashflow", "invoices"], 
+        "filters": {
+          "date_range": "last_90_days"
+        }
+      }
+    },
+    "partialExport": {
+      "pdf": {
+        "sections": ["dashboard"],
+        "filters": {
+          "start_date": "2024-01-01",
+          "end_date": "2024-01-31"
+        }
+      },
+      "csv": {
+        "sections": ["invoices"],
+        "filters": {
+          "status": "UNPAID",
+          "customer_id": 1
+        }
+      }
+    },
+    "snapshotWithFilters": {
+      "sections": ["dashboard", "invoices"],
+      "filters": {
+        "date_range": "last_7_days",
+        "status": "SENT"
+      }
+    }
+  },
+  "validationRules": {
+    "pdf": {
+      "minFileSize": 1024,
+      "maxFileSize": 10485760,
+      "requiredContent": ["Dashboard Report", "Generated on"]
+    },
+    "xlsx": {
+      "minFileSize": 512,
+      "maxFileSize": 5242880,
+      "requiredSheets": 1
+    },
+    "csv": {
+      "minFileSize": 100,
+      "maxFileSize": 1048576,
+      "requiredColumns": 7
+    },
+    "snapshot": {
+      "minFileSize": 2048,
+      "maxFileSize": 20971520,
+      "requiredContent": ["Dashboard Snapshot", "Generated on"]
+    }
+  },
+  "errorScenarios": {
+    "invalidFormat": {
+      "format": "xml",
+      "expectedError": "Invalid export format"
+    },
+    "noSectionsSelected": {
+      "format": "pdf",
+      "sections": [],
+      "expectedError": "At least one section must be selected"
+    },
+    "csvWithMultipleSections": {
+      "format": "csv",
+      "sections": ["dashboard", "invoices"],
+      "expectedError": "CSV export only supports invoices section"
+    }
+  }
+} 

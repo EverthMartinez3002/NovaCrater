@@ -152,7 +152,7 @@ async function handleSnapshotExport(selectedSections) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div data-cy="dashboard-container" class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Navigation Tabs and Export Button -->
     <div class="px-6 pt-6 pb-4">
       <div class="flex items-center justify-end">
@@ -180,6 +180,7 @@ async function handleSnapshotExport(selectedSections) {
 
           <!-- Add New Invoice Button -->
           <BaseButton
+            data-cy="add-invoice-button"
             variant="primary"
             size="sm"
             @click="router.push({ name: 'invoices.create' })"
@@ -191,9 +192,10 @@ async function handleSnapshotExport(selectedSections) {
           </BaseButton>
 
           <!-- Export Button -->
-          <BaseDropdown>
+          <BaseDropdown data-cy="export-dropdown">
             <template #activator>
           <BaseButton
+            data-cy="export-button"
             variant="primary-outline"
             size="sm"
           >
@@ -204,21 +206,21 @@ async function handleSnapshotExport(selectedSections) {
           </BaseButton>
             </template>
 
-            <BaseDropdownItem @click="openExportDialog('pdf')">
+            <BaseDropdownItem data-cy="export-pdf" @click="openExportDialog('pdf')">
               <template #left>
                 <BaseIcon name="DocumentTextIcon" class="w-4 h-4" />
               </template>
               Export as PDF
             </BaseDropdownItem>
 
-            <BaseDropdownItem @click="openExportDialog('xlsx')">
+            <BaseDropdownItem data-cy="export-xlsx" @click="openExportDialog('xlsx')">
               <template #left>
                 <BaseIcon name="DocumentChartBarIcon" class="w-4 h-4" />
               </template>
               Export as XLSX
             </BaseDropdownItem>
 
-            <BaseDropdownItem @click="openExportDialog('csv')">
+            <BaseDropdownItem data-cy="export-csv" @click="openExportDialog('csv')">
               <template #left>
                 <BaseIcon name="TableCellsIcon" class="w-4 h-4" />
               </template>
@@ -233,7 +235,7 @@ async function handleSnapshotExport(selectedSections) {
     <div class="p-6">
       <div class="space-y-6">
         <!-- Summary, Outstanding Invoices, and Status Distribution Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div data-cy="dashboard-top-row" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           <!-- Summary Card -->
           <div class="lg:col-span-3">
             <DashboardSummaryCard />

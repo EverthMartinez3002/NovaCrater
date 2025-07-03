@@ -1,6 +1,6 @@
 <!-- Top5BarChart.vue -->
 <template>
-  <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 h-full flex flex-col">
+  <div data-cy="outstanding-invoices-chart" class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 h-full flex flex-col">
     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
       Top 5 Outstanding Invoices
     </h3>
@@ -9,6 +9,7 @@
       <!-- Tipo de Top 5 -->
       <div class="w-40">
         <BaseMultiselect
+          data-cy="chart-type-selector"
           v-model="selectedType"
           :options="typeOptions"
           :allow-empty="false"
@@ -27,7 +28,7 @@
 
     <!-- Chart -->
     <div class="relative flex-1">
-      <canvas ref="canvasRef" class="w-full h-full"></canvas>
+      <canvas data-cy="outstanding-chart-canvas" ref="canvasRef" class="w-full h-full"></canvas>
        <!-- Loading Overlay -->
       <div v-if="loading" class="absolute inset-0 bg-white/70 dark:bg-gray-800/70 rounded-lg flex items-center justify-center">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>

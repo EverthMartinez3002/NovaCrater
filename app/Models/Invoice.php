@@ -264,6 +264,8 @@ class Invoice extends Model implements HasMedia
             };
         })->when($filters['paid_status'] ?? null, function ($query, $paidStatus) {
             $query->wherePaidStatus($paidStatus);
+        })->when($filters['overdue'] ?? null, function ($query, $overdue) {
+            $query->where('overdue', $overdue === 'true');
         })->when($filters['invoice_id'] ?? null, function ($query, $invoiceId) {
             $query->whereInvoice($invoiceId);
         })->when($filters['invoice_number'] ?? null, function ($query, $invoiceNumber) {
